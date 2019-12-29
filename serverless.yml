@@ -54,9 +54,16 @@ resources:
         TableName: invitation
 
 functions:
-  hello:
+  getInvitation:
     handler: handler.getInvitation
     events:
       - http:
-          path: getInvitation
+          path: getInvitation/{invitation_id}
           method: get
+  rsvpInvitation:
+    handler: handler.updateInvitation
+    events:
+      - http:
+          path: updateInvitation/{invitation_id}
+          method: put
+          cors: true

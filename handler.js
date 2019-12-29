@@ -14,7 +14,7 @@ export const getInvitation = (event, context, callback) => {
   const params = {
     TableName: 'invitation',
     Key: {
-      invitation_id: 'someInvitation',
+      invitation_id: event.pathParameters.invitation_id,
     },
   };
 
@@ -37,6 +37,40 @@ export const getInvitation = (event, context, callback) => {
     };
     callback(null, response);
   });
+};
+
+export const updateInvitation = (event, context, callback) => {
+  const params = {
+    TableName: 'invitation',
+      Key: {
+        invitation_id: event.pathParameters.invitation_id,
+      },
+      UpdateExpression: "set rsvp = :x",
+      ExpressionAttributeValues: {
+          ":x": true,
+      }
+  };
+
+  dynamoDb.update(params, (error, result) => {
+    // handle potential errors
+    if (error) {
+      console.error(error);
+      callback(null, {
+        statusCode: error.statusCode || 501,
+        headers: { 'Content-Type': 'text/plain' },
+        body: 'Couldn\'t fetch the todo item.',
+      });
+      return;
+    }
+
+    // create a response
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify(result.Attributes),
+    };
+    callback(null, response);
+  });
+
 };
 
 const message = ({ time, ...rest }) => new Promise((resolve, reject) =>
